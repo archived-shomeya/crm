@@ -1,0 +1,26 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Base module for all CRM interactions.
+ * @author Michael Prasuhn <mike@shomeya.com>
+ * @link http://shomeya.com
+ * @package crm
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function crm_install() {
+//  drupal_install_schema('crm');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function crm_schema() {
+  $schema = array();
+	
+  return $schema;
+}
