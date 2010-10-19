@@ -26,7 +26,7 @@ function crm_menu() {
     'description' => 'Access and administer CRM features.',
     'position' => 'left',
     'weight' => -5,
-    'page callback' => 'system_settings_overview',
+    'page callback' => 'system_admin_menu_block_page',
     'access arguments' => array('access crm'),
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
