@@ -46,6 +46,7 @@ projects[views_dynamic_fields][type] = "module"
 projects[views_dynamic_fields][subdir] = "contrib"
 
 projects[views_savedsearches][type] = "module"
+projects[views_savedsearches][subdir] = "contrib"
 projects[views_savedsearches][download][type] = "git"
 projects[views_savedsearches][download][url] = "git://git.drupalcode.org/project/views_savedsearches.git"
 
