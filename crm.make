@@ -58,7 +58,7 @@ projects[crm_features][download][url] = "git://github.com/shomeya/crm_features.g
 
 
 ; Custom modules
-projects[crm_fields][type] = "module"
-projects[crm_fields][subdir] = "custom"
-projects[crm_fields][download][type] = "git"
-projects[crm_fields][download][url] = "git://github.com/shomeya/crm_fields.git"
+projects[multigroup_default_order][type] = "module"
+projects[multigroup_default_order][subdir] = "custom"
+projects[multigroup_default_order][download][type] = "git"
+projects[multigroup_default_order][download][url] = "git://github.com/shomeya/multigroup_default_order.git"
