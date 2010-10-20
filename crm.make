@@ -1,9 +1,7 @@
 ; To build this file, use `drush make crm.make --no-core . --contrib-destination=.` from within the crm module directory
 
-
 core = "6.x"
 api = 2
-
 
 
 projects[auto_nodetitle][version] = "1.2"
@@ -46,7 +44,7 @@ projects[views_dynamic_fields][type] = "module"
 projects[views_dynamic_fields][subdir] = "contrib"
 
 projects[views_savedsearches][type] = "module"
-projects[views_savedsearches][subdir] = "patched"
+projects[views_savedsearches][subdir] = "custom"
 projects[views_savedsearches][download][type] = "git"
 projects[views_savedsearches][download][url] = "git@github.com:shomeya/views_savedsearches.git"
 
