@@ -31,6 +31,10 @@ projects[uc_views] = 3.0
 projects[uc_views][type] = "module"
 projects[uc_views][subdir] = "contrib"
 
+projects[jquery_update] = 1.1
+projects[jquery_update][type] = "module"
+projects[jquery_update][subdir] = "contrib"
+
 projects[views_bonus] = 1.1
 projects[views_bonus][type] = "module"
 projects[views_bonus][subdir] = "contrib"
