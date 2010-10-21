@@ -47,6 +47,9 @@ projects[views_dynamic_fields] = 1.2
 projects[views_dynamic_fields][type] = "module"
 projects[views_dynamic_fields][subdir] = "contrib"
 
+projects[views_send][type] = "module"
+projects[views_send][subdir] = "contrib"
+
 
 ; Features
 projects[crm_features][type] = "module"
