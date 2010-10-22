@@ -35,6 +35,11 @@ projects[jquery_update] = 1.1
 projects[jquery_update][type] = "module"
 projects[jquery_update][subdir] = "contrib"
 
+
+projects[mimemail] = 1.0-alpha6
+projects[mimemail][type] = "module"
+projects[mimemail][subdir] = "contrib"
+
 projects[views_bonus] = 1.1
 projects[views_bonus][type] = "module"
 projects[views_bonus][subdir] = "contrib"
@@ -58,6 +63,11 @@ projects[crm_features][download][url] = "git://github.com/shomeya/crm_features.g
 
 
 ; Custom modules
+projects[crm_base][type] = "module"
+projects[crm_base][subdir] = "custom"
+projects[crm_base][download][type] = "git"
+projects[crm_base][download][url] = "git://github.com/shomeya/crm_base.git"
+
 projects[multigroup_default_order][type] = "module"
 projects[multigroup_default_order][subdir] = "custom"
 projects[multigroup_default_order][download][type] = "git"
