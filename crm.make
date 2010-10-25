@@ -18,6 +18,7 @@ projects[gmap][subdir] = "contrib"
 projects[location][version] = "3.1"
 projects[location][type] = "module"
 projects[location][subdir] = "contrib"
+projects[location][patch][] = "http://drupal.org/files/issues/505596-11.views-proximity-filter-optional.patch"
 
 projects[nodereferrer][version] = "1.0-rc2"
 projects[nodereferrer][type] = "module"
