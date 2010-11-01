@@ -37,6 +37,9 @@ projects[jquery_update] = 1.1
 projects[jquery_update][type] = "module"
 projects[jquery_update][subdir] = "contrib"
 
+projects[conditional_fields] = 2.0-beta2
+projects[conditional_fields][type] = "module"
+projects[conditional_fields][subdir] = "contrib"
 
 projects[mimemail] = 1.0-alpha6
 projects[mimemail][type] = "module"
