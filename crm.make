@@ -31,6 +31,7 @@ projects[reverse_node_reference][subdir] = "contrib"
 projects[uc_views] = 3.0
 projects[uc_views][type] = "module"
 projects[uc_views][subdir] = "contrib"
+projects[uc_views][patch][] = "http://drupal.org/files/issues/uc_views-products-allowed-values_0.patch"
 
 projects[jquery_update] = 1.1
 projects[jquery_update][type] = "module"
