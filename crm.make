@@ -20,14 +20,6 @@ projects[location][type] = "module"
 projects[location][subdir] = "contrib"
 projects[location][patch][] = "http://drupal.org/files/issues/505596-11.views-proximity-filter-optional.patch"
 
-projects[nodereferrer][version] = "1.0-rc2"
-projects[nodereferrer][type] = "module"
-projects[nodereferrer][subdir] = "contrib"
-
-projects[reverse_node_reference] = 1.0
-projects[reverse_node_reference][type] = "module"
-projects[reverse_node_reference][subdir] = "contrib"
-
 projects[uc_views] = 3.0
 projects[uc_views][type] = "module"
 projects[uc_views][subdir] = "contrib"
