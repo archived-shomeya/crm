@@ -1,0 +1,11 @@
+; $Id$
+name = Drupal CRM
+description = Defines features and functions common to the CRM modules.
+package = CRM
+core = 7.x
+
+; Base module files
+files[] = crm.module
+
+; Tests
+;files[] = tests/crm.test
