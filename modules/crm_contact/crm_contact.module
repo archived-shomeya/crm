@@ -6,3 +6,325 @@
  * 
  */
 
+/**
+ * Implements hook_entity_info().
+ */
+function crm_contact_entity_info() {
+  $return = array(
+    'crm_contact' => array(
+      'label' => t('Contact'),
+      'controller class' => 'CRMContactEntityController',
+      'base table' => 'crm_contact',
+      'revision table' => 'crm_contact_revision',
+      'fieldable' => TRUE,
+      'entity keys' => array(
+        'id' => 'cid',
+        'revision' => 'vid',
+        'bundle' => 'type',
+        'label' => 'title',
+      ),
+      'bundle keys' => array(
+        'bundle' => 'type',
+      ),
+      'bundles' => array(),
+      'view modes' => array(
+        'full' => array(
+          'label' => t('Full contact'),
+          'custom settings' => FALSE,
+        ),
+      ),
+      'uri callback' => 'crm_contact_uri',
+      'creation callback' => '_crm_contact_create',
+      'save callback' => 'crm_contact_save',
+      'deletion callback' => 'crm_contact_delete',
+      'access callback' => 'crm_contact_access',
+      'token type' => 'crm_contact',
+    ),
+  );
+
+  return $return;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function crm_contact_menu() {
+  $items = array();
+
+  // Add a contact.
+  $items['crm/contact/add'] = array(
+    'title' => 'Add a contact',
+    'description' => 'Add a new contact.',
+    'page callback' => 'crm_contact_add_page',
+    'access callback' => 'crm_contact_access',
+    'access arguments' => array('create'),
+    'weight' => 10,
+    'file' => 'includes/crm_contact.forms.inc',
+  );
+
+  $items['crm/contact/%crm_contact'] = array(
+    'title callback' => 'crm_contact_contact_title',
+    'title arguments' => array(2),
+    'page callback' => 'crm_contact_view',
+    'page arguments' => array(2),
+    'access callback' => 'crm_contact_access',
+    'access arguments' => array('view', 2),
+    'weight' => 10,
+  );
+  $items['crm/contact/%crm_contact/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+  
+  $items['crm/contact/%crm_contact/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('crm_contact_contact_delete_form', 2),
+    'access callback' => 'crm_contact_access',
+    'access arguments' => array('delete', 2),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+    'file' => 'includes/crm_contact.forms.inc',
+  );
+  $items['crm/contact/%crm_contact/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('crm_contact_contact_form', 2),
+    'access callback' => 'crm_contact_access',
+    'access arguments' => array('edit', 2),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'includes/crm_contact.forms.inc',
+  );
+  
+  return $items;
+}
+
+
+/**
+ * Entity uri callback: gives modules a chance to specify a path for a contact.
+ */
+function crm_contact_uri($contact) {
+  // Allow modules to specify a path, returning the first one found.
+  foreach (module_implements('crm_contact_uri') as $module) {
+    $uri = module_invoke($module, 'crm_contact_uri', $contact);
+
+    // If the implementation returned data, use that now.
+    if (!empty($uri)) {
+      return $uri;
+    }
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function crm_contact_permission() {
+  $permissions = array(
+    'administer contacts' => array(
+      'title' => t('Administer contacts'),
+      'description' => t('Allows users to perform any action on contacts of any type.'),
+      'restrict access' => TRUE,
+    ),
+    'access contacts' => array(
+      'title' => t('Access contacts'),
+      'description' => t('Allows users to view lists of contacts.'),
+    ),
+  );
+
+  return $permissions;
+}
+
+
+/**
+ * Loads a contact by ID.
+ */
+function crm_contact_load($contact_id) {
+  if (empty($contact_id)) {
+    return FALSE;
+  }
+
+  $contacts = crm_contact_load_multiple(array($contact_id), array());
+  return $contacts ? reset($contacts) : FALSE;
+}
+
+/**
+ * Loads multiple contacts by ID or based on a set of matching conditions.
+ *
+ * @see entity_load()
+ *
+ * @param $contact_ids
+ *   An array of contact IDs.
+ * @param $conditions
+ *   An array of conditions on the {crm_contact} table in the form
+ *     'field' => $value.
+ * @param $reset
+ *   Whether to reset the internal contact loading cache.
+ *
+ * @return
+ *   An array of contact objects indexed by contact_id.
+ */
+function crm_contact_load_multiple($contact_ids = array(), $conditions = array(), $reset = FALSE) {
+  if (empty($contact_ids) && empty($conditions)) {
+    return array();
+  }
+
+  return entity_load('crm_contact', $contact_ids, $conditions, $reset);
+}
+
+/**
+ * Returns an initialized contact object.
+ *
+ * @param $type
+ *   The machine-readable type of the contact.
+ *
+ * @return
+ *   A contact object with all default fields initialized.
+ */
+function crm_contact_new($type = '') {
+  return entity_get_controller('crm_contact')->create($type);
+}
+
+/**
+ * Creation callback for the Entity Metadata module.
+ */
+function _crm_contact_create($values = array()) {
+  // Create a new contact of the specified type.
+  $contact = crm_contact_new($values['type']);
+  unset($values['type']);
+
+  $wrapper = entity_metadata_wrapper('crm_contact', $contact);
+
+  foreach ($values as $name => $value) {
+    $wrapper->$name->set($value);
+  }
+
+  return $wrapper;
+}
+
+/**
+ * Saves a contact.
+ *
+ * @param $contact
+ *   The full contact object to save.
+ *
+ * @return
+ *   The saved contact object.
+ */
+function crm_contact_save($contact) {
+  return entity_get_controller('crm_contact')->save($contact);
+}
+
+/**
+ * Deletes a contact by ID.
+ *
+ * @param $contact_id
+ *   The ID of the contact to delete.
+ *
+ * @return
+ *   TRUE on success, FALSE otherwise.
+ */
+function crm_contact_delete($contact_id) {
+  return crm_contact_delete_multiple(array($contact_id));
+}
+
+/**
+ * Deletes multiple contacts by ID.
+ *
+ * @param $contact_ids
+ *   An array of contact IDs to delete.
+ *
+ * @return
+ *   TRUE on success, FALSE otherwise.
+ */
+function crm_contact_delete_multiple($contact_ids) {
+  return entity_get_controller('crm_contact')->delete($contact_ids);
+}
+
+/**
+ * Checks contact access for various operations.
+ *
+ * @param $op
+ *   The operation being performed. One of 'view', 'update', 'create' or
+ *   'delete'.
+ * @param $contact
+ *   Optionally a contact to check access for or for the create operation the
+ *   contact type. If nothing is given access permissions for all contacts are returned.
+ * @param $account
+ *   The user to check for. Leave it to NULL to check for the current user.
+ */
+function crm_contact_access($op, $contact = NULL, $account = NULL) {
+  global $user;
+  $account = isset($account) ? $account : $user;
+
+  if (user_access('administer contacts', $account)) {
+    return TRUE;
+  }
+
+  if ($op == 'view' && user_access('access contacts', $account)) {
+    return TRUE;
+  }
+
+  if (isset($contact) && is_string($contact) && $op == 'create' && user_access('create ' . $contact . ' contacts', $account)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Callback for getting contact properties.
+ * @see crm_contact_entity_property_info()
+ */
+function crm_contact_get_properties($contact, array $options, $name) {
+  switch ($name) {
+    case 'creator':
+      return $contact->uid;
+    case 'edit-url':
+      return url('crm/contact/' . $contact->cid . '/edit', $options);
+  }
+}
+
+/**
+ * Callback for setting contact properties.
+ * @see crm_contact_entity_property_info()
+ */
+function crm_contact_set_properties($contact, $name, $value) {
+  if ($name == 'creator') {
+    $contact->uid = $value;
+  }
+}
+
+/**
+ * Handler to load the unchanged contact variable for rules.
+ * @see commerce_product_rules_variables().
+ */
+function crm_contact_rules_var_unchanged($contact) {
+  $unchanged = drupal_static('crm_contact_unchanged');
+  if (isset($contact->cid) && isset($unchanged[$contact->cid])) {
+    return $unchanged[$contact->cid];
+  }
+}
+
+/**
+ * Display a contact.
+ *
+ * @param  $contact
+ *   A Fully loaded contact object.
+ * @return void
+ */
+function crm_contact_view($contact) {
+  return kprint_r($contact, TRUE);
+}
+
+/**
+ * Title callback for hook_menu().
+ *
+ * @param  $contact
+ *   A loaded contact object.
+ * @return void
+ */
+function crm_contact_contact_title($contact) {
+  return check_plain($contact->title);
+}
