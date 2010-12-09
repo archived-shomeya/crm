@@ -286,3 +286,53 @@ function crm_contact_contact_type_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Submit callback for delete button on crm_contact_contact_type_form().
+ *
+ * @see crm_contact_contact_type_form()
+ */
+function crm_contact_contact_type_form_delete_submit($form, &$form_state) {
+  $form_state['redirect'] = 'admin/crm/contact/types/' . strtr($form_state['contact_type']->type, array('_' => '-')) . '/delete';
+}
+
+/**
+ * Form callback: confirmation form for deleting a contact type.
+ *
+ * @param $contact_type
+ *   The contact type object to be deleted.
+ *
+ * @see confirm_form()
+ */
+function crm_contact_contact_type_delete_form($form, &$form_state, $contact_type) {
+  $form_state['contact_type'] = $contact_type;
+
+  // Ensure this include file is loaded when the form is rebuilt from the cache.
+  $form_state['build_info']['files']['form'] = drupal_get_path('module', 'crm_contact') . '/includes/crm_contact.forms.inc';
+
+  $form['#submit'][] = 'crm_contact_contact_type_delete_form_submit';
+
+  $form = confirm_form($form,
+    t('Are you sure you want to delete the %name contact type?', array('%name' => $contact_type->name)),
+    'admin/crm/contact/types',
+    '<p>' . t('This action cannot be undone.') . '</p>',
+    t('Delete'),
+    t('Cancel'),
+    'confirm'
+  );
+
+  return $form;
+}
+
+/**
+ * Submit callback for crm_contact_contact_type_delete_form().
+ */
+function crm_contact_contact_type_delete_form_submit($form, &$form_state) {
+  $contact_type = $form_state['contact_type'];
+
+  crm_contact_contact_type_delete($contact_type->type);
+
+  drupal_set_message(t('The contact type %name has been deleted.', array('%name' => $contact_type->name)));
+  watchdog('crm_contact', 'Deleted contact type %name.', array('%name' => $contact_type->name), WATCHDOG_NOTICE);
+
+  $form_state['redirect'] = 'admin/crm/contact/types';
+}

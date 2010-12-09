@@ -42,6 +42,18 @@ function crm_contact_entity_info() {
     ),
   );
 
+  foreach (crm_contact_type_get_name() as $type => $name) {
+    $return['crm_contact']['bundles'][$type] = array(
+      'label' => $name,
+      'admin' => array(
+        'path' => 'admin/crm/contact/types/%crm_contact_type',
+        'real path' => 'admin/crm/contact/types/' . strtr($type, array('_' => '-')),
+        'bundle argument' => 4,
+        'access arguments' => array('administer contact types'),
+      ),
+    );
+  }
+
   return $return;
 }
 
@@ -116,8 +128,40 @@ function crm_contact_menu() {
     'type' => MENU_LOCAL_ACTION,
     'file' => 'includes/crm_contact.types.inc',
   );
-  
+  $items['admin/crm/contact/types/%crm_contact_type'] = array(
+    'title callback' => 'crm_contact_type_title',
+    'title arguments' => array(4),
+    'page callback' => 'crm_contact_contact_type_form_wrapper',
+    'page arguments' => array(4),
+    'access arguments' => array('administer contact types'),
+    'file' => 'includes/crm_contact.types.inc',
+  );
+  $items['admin/crm/contact/types/%crm_contact_type/edit'] = array(
+    'title' => 'Edit',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+  $items['admin/crm/contact/types/%crm_contact_type/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'crm_contact_contact_type_delete_form_wrapper',
+    'page arguments' => array(4),
+    'access arguments' => array('administer contact types'),
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+    'weight' => 10,
+    'file' => 'includes/crm_contact.types.inc',
+  );
+
   return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function crm_contact_menu_alter(&$items) {
+  // Transform the field UI tabs into contextual links.
+  $items['admin/crm/contact/types/%crm_contact_type/fields']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
+  $items['admin/crm/contact/types/%crm_contact_type/display']['context'] = MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE;
 }
 
 /**
@@ -351,7 +395,7 @@ function crm_contact_set_properties($contact, $name, $value) {
 
 /**
  * Handler to load the unchanged contact variable for rules.
- * @see commerce_product_rules_variables().
+ * @see crm_contact_rules_variables().
  */
 function crm_contact_rules_var_unchanged($contact) {
   $unchanged = drupal_static('crm_contact_unchanged');
@@ -386,17 +430,17 @@ function crm_contact_contact_title($contact) {
  * Returns an array of contact type objects keyed by type.
  */
 function crm_contact_types() {
-  // First check the static cache for a product types array.
+  // First check the static cache for a contact types array.
   $contact_types = &drupal_static(__FUNCTION__);
 
   // If it did not exist, fetch the types now.
   if (!isset($contact_types)) {
     $contact_types = array();
 
-    // Find product types defined by hook_commerce_product_info().
+    // Find contact types defined by hook_crm_contact_info().
     foreach (module_implements('crm_contact_info') as $module) {
       foreach (module_invoke($module, 'crm_contact_info') as $type => $contact_type) {
-        // Set the module each product type is defined by.
+        // Set the module each contact type is defined by.
         $contact_type->module = $module;
         $contact_types[$type] = $contact_type;
       }
@@ -410,6 +454,39 @@ function crm_contact_types() {
 }
 
 /**
+ * Returns the human readable name of any or all contact types.
+ *
+ * @param $type
+ *   Optional parameter specifying the type whose name to return.
+ *
+ * @return
+ *   Either an array of all contact type names keyed by the machine name or a
+ *     string containing the human readable name for the specified type. If a
+ *     type is specified that does not exist, this function returns FALSE.
+ */
+function crm_contact_type_get_name($type = NULL) {
+  $contact_types = crm_contact_types();
+
+  // Return a type name if specified and it exists.
+  if (!empty($type)) {
+    if (isset($contact_types[$type])) {
+      return $contact_types[$type]->name;
+    }
+    else {
+      // Return FALSE if it does not exist.
+      return FALSE;
+    }
+  }
+
+  // Otherwise turn the array values into the type name only.
+  foreach ($contact_types as $key => $value) {
+    $contact_types[$key] = $value->name;
+  }
+
+  return $contact_types;
+}
+
+/**
  * Implements hook_crm_contact_info().
  */
 function crm_contact_crm_contact_info() {
@@ -417,7 +494,7 @@ function crm_contact_crm_contact_info() {
 }
 
 /**
- * Returns an initialized product type object.
+ * Returns an initialized contact type object.
  */
 function crm_contact_contact_type_new() {
   return (object) array(
@@ -431,7 +508,7 @@ function crm_contact_contact_type_new() {
 /**
  * Saves a contact type.
  *
- * This function will either insert a new product type if $contact_type->is_new
+ * This function will either insert a new contact type if $contact_type->is_new
  * is set or attempt to update an existing contact type if it is not. It does
  * not currently support changing the machine-readable name of the contact type,
  * nor is this possible through the form supplied by the Contact module.
@@ -458,7 +535,7 @@ function crm_contact_contact_type_save($contact_type, $configure = TRUE) {
     // Notify the field API that a new bundle has been created.
     field_attach_create_bundle('crm_contact', $contact_type->type);
 
-    // Add the purchase_price field to the product type.
+    // Add the purchase_price field to the contact type.
     if ($configure) {
       crm_contact_configure_contact_type($contact_type->type);
     }
@@ -475,7 +552,7 @@ function crm_contact_contact_type_save($contact_type, $configure = TRUE) {
 }
 
 /**
- * Resets the cached list of product types.
+ * Resets the cached list of contact types.
  */
 function crm_contact_types_reset() {
   $contact_types = &drupal_static('crm_contact_types');
@@ -483,7 +560,7 @@ function crm_contact_types_reset() {
 }
 
 /**
- * Ensures a base price field is present on a product type bundle.
+ * Ensures a base price field is present on a contact type bundle.
  */
 function crm_contact_configure_contact_type($type) {
   
@@ -518,4 +595,35 @@ function crm_contact_type_load($type) {
   $type = strtr($type, array('-' => '_'));
   $contact_types = crm_contact_types();
   return !empty($contact_types[$type]) ? $contact_types[$type] : FALSE;
+}
+
+/**
+ * Title callback: return the human-readable contact type name.
+ */
+function crm_contact_type_title($contact_type) {
+  return $contact_type->name;
+}
+
+/**
+ * Deletes a contact type.
+ *
+ * @param $type
+ *   The machine-readable name of the contact type.
+ */
+function crm_contact_contact_type_delete($type) {
+  $contact_type = crm_contact_type_load($type);
+
+  db_delete('crm_contact_type')
+    ->condition('type', $type)
+    ->execute();
+
+  // Rebuild the menu to get rid of this type's contact add menu item.
+  crm_contact_types_reset();
+  menu_rebuild();
+
+  // Notify the field API that this bundle has been destroyed.
+  field_attach_delete_bundle('crm_contact', $type);
+
+  // Notify other modules that this contact type has been deleted.
+  module_invoke_all('crm_contact_type_delete', $contact_type);
 }
