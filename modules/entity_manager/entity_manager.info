@@ -1,0 +1,13 @@
+; $Id$
+name = Entity Manager
+description = Provides an API for managing entities, their bundles and fields.
+package = CRM
+core = 7.x
+
+; Base module files
+files[] = entity_manager.module
+files[] = entity_manager.install
+
+; Module includes
+files[] = includes/entity_manager.types.inc
+files[] = includes/entity_manager.forms.inc
