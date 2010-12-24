@@ -82,7 +82,7 @@ function entity_manager_entity_info_alter(&$entities) {
             'label' => $name,
             'admin' => array(
               'path' => $entity_info['managed options']['bundles']['path'] . '/%entity_manager_type',
-              'real path' => $entity_info['managed options']['bundles']['path'] . strtr($type, array('_' => '-')),
+              'real path' => $entity_info['managed options']['bundles']['path'] . '/'. strtr($type, array('_' => '-')),
               'bundle argument' => $entity_info['managed options']['bundles']['bundle argument'],
               'access arguments' => array('administer ' . $entity_info['label'] . ' types'),
             ),
