@@ -12,15 +12,14 @@
  */
 function crm_contact_install() {
   // Create the basic product type.
-  $contact_type = crm_contact_contact_type_new();
+  $contact_type = entity_manager_bundle_type_new('crm_contact');
 
   $contact_type->type = 'default';
   $contact_type->name = t('Contact');
   $contact_type->description = t('A basic contact type.');
   $contact_type->is_new = TRUE;
 
-  crm_contact_contact_type_save($contact_type, FALSE);
-
+  entity_manager_bundle_type_save($contact_type);
 }
 
 /**
@@ -156,39 +155,6 @@ function crm_contact_schema() {
         'columns' => array('uid' => 'uid'),
       ),
     ),
-  );
-
-  $schema['crm_contact_type'] = array(
-    'description' => 'Stores information about {crm_contact} types created via Contact UI.',
-    'fields' => array(
-      'type' => array(
-        'description' => 'The machine-readable name of this type.',
-        'type' => 'varchar',
-        'length' => 32,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'name' => array(
-        'description' => 'The human-readable name of this type.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'description' => array(
-        'description' => 'A brief description of this type.',
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-      ),
-      'help' => array(
-        'description' => 'Help information shown to the user when creating a {crm_contact} of this type.',
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-      ),
-    ),
-    'primary key' => array('type'),
   );
 
   return $schema;

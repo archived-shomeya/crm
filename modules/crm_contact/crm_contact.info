@@ -4,6 +4,7 @@ description = Defines the base contact entity and features..
 package = CRM
 dependencies[] = rules
 dependencies[] = crm
+dependencies[] = entity_manager
 core = 7.x
 
 ; Base module files
@@ -14,7 +15,6 @@ files[] = crm_contact.install
 files[] = crm_contact.info.inc
 files[] = includes/crm_contact.controller.inc
 files[] = includes/crm_contact.forms.inc
-files[] = includes/crm_contact.types.inc
 
 ; Views include
 ;files[] = includes/views/crm_contact.views.inc
