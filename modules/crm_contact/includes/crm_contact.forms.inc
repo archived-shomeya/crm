@@ -68,10 +68,10 @@ function crm_contact_contact_form($form, &$form_state, $contact) {
  * Validation callback for crm_contact_contact_form().
  */
 function crm_contact_contact_form_validate($form, &$form_state) {
-  $cotnact = $form_state['crm_contact'];
+  $contact = $form_state['crm_contact'];
 
   // Notify field widgets to validate their data.
-  field_attach_form_validate('crm_contact', $cotnact, $form, $form_state);
+  field_attach_form_validate('crm_contact', $contact, $form, $form_state);
 }
 
 /**
