@@ -76,7 +76,7 @@ function entity_manager_menu() {
 function entity_manager_entity_info_alter(&$entities) {
   foreach ($entities as $entity_type => &$entity_info) {
     if (isset($entity_info['managed']) && $entity_info['managed'] == TRUE) {
-      if (isset($entity_info['managed options']['bundles']['view'])) {
+      if ($entity_info['managed options']['bundles']['field ui']) {
         foreach (entity_manager_type_get_name($entity_type) as $type => $name) {
           $entity_info['bundles'][$type] = array(
             'label' => $name,
