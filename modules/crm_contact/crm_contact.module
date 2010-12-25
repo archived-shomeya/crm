@@ -42,8 +42,9 @@ function crm_contact_entity_info() {
       'managed' => TRUE,
       'managed options' => array(
         'bundles' => array(
-          'path' => 'admin/crm/contact/types',
-          'bundle argument' => 4,
+          'path' => 'admin/crm/entities/contact/types',
+          'bundle argument' => 5,
+          'field ui' => TRUE,
         ),
       ),
     ),
