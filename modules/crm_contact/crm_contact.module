@@ -44,12 +44,7 @@ function crm_contact_entity_info() {
         'bundles' => array(
           'path' => 'admin/crm/contact/types',
           'bundle argument' => 4,
-          'add' => TRUE,
-          'edit' => TRUE,
-          'view' => TRUE,
-          'delete' => TRUE,
         ),
-        'perms' => TRUE,
       ),
     ),
   );
@@ -151,7 +146,7 @@ function crm_contact_permission() {
       'title' => t('Access contacts'),
       'description' => t('Allows users to view lists of contacts.'),
     ),
-    'administer contact types' => array(
+    'administer Contact types' => array(
       'title' => t('Administer contact types'),
       'description' => t('Allow users to administer the available contact types.'),
     ),
