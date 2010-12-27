@@ -4,8 +4,8 @@ description = Defines features and functions common to the CRM modules.
 package = CRM
 core = 7.x
 
-; Base module files
-files[] = crm.module
+; Module includes
+files[] = includes/crm_controller.inc
 
 ; Tests
 ;files[] = tests/crm.test
