@@ -7,8 +7,7 @@
  */
 
 function crm_contact_add_page() {
-  $contact = crm_contact_new();
-  $contact->type = 'default';
+  $contact = entity_get_controller('crm_contact')->create(array('type' => 'default'));
   return drupal_get_form('crm_contact_contact_form', $contact);
 }
 
@@ -94,7 +93,7 @@ function crm_contact_contact_form_submit($form, &$form_state) {
   field_attach_submit('crm_contact', $contact, $form, $form_state);
 
   // Save the contact.
-  crm_contact_save($contact);
+  $contact->save();
 
   // Redirect based on the button clicked.
   drupal_set_message(t('Contact saved.'));
@@ -134,7 +133,7 @@ function crm_contact_contact_delete_form($form, &$form_state, $contact) {
 function crm_contact_contact_delete_form_submit($form, &$form_state) {
   $contact = $form_state['crm_contact'];
 
-  if (crm_contact_delete($contact->cid)) {
+  if ($contact->delete()) {
     drupal_set_message(t('%title has been deleted.', array('%title' => $contact->title)));
     watchdog('crm_contact', 'Deleted contact %title.', array('%title' => $contact->title), WATCHDOG_NOTICE);
   }

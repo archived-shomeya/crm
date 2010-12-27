@@ -13,13 +13,14 @@ function crm_contact_entity_info() {
   $return = array(
     'crm_contact' => array(
       'label' => t('Contact'),
-      'controller class' => 'CRMContactEntityController',
+      'controller class' => 'CRMEntityController',
+      'entity class' => 'CRMEntityController',
       'base table' => 'crm_contact',
       'revision table' => 'crm_contact_revision',
       'fieldable' => TRUE,
       'entity keys' => array(
         'id' => 'cid',
-        'revision' => 'vid',
+        'revision' => 'rid',
         'bundle' => 'type',
         'label' => 'title',
       ),
@@ -34,10 +35,6 @@ function crm_contact_entity_info() {
         ),
       ),
       'uri callback' => 'crm_contact_uri',
-      'creation callback' => '_crm_contact_create',
-      'save callback' => 'crm_contact_save',
-      'deletion callback' => 'crm_contact_delete',
-      'access callback' => 'crm_contact_access',
       'token type' => 'crm_contact',
       'managed' => TRUE,
       'managed options' => array(
@@ -194,19 +191,6 @@ function crm_contact_load_multiple($contact_ids = array(), $conditions = array()
 }
 
 /**
- * Returns an initialized contact object.
- *
- * @param $type
- *   The machine-readable type of the contact.
- *
- * @return
- *   A contact object with all default fields initialized.
- */
-function crm_contact_new($type = '') {
-  return entity_get_controller('crm_contact')->create($type);
-}
-
-/**
  * Creation callback for the Entity Metadata module.
  */
 function _crm_contact_create($values = array()) {
@@ -224,32 +208,6 @@ function _crm_contact_create($values = array()) {
 }
 
 /**
- * Saves a contact.
- *
- * @param $contact
- *   The full contact object to save.
- *
- * @return
- *   The saved contact object.
- */
-function crm_contact_save($contact) {
-  return entity_get_controller('crm_contact')->save($contact);
-}
-
-/**
- * Deletes a contact by ID.
- *
- * @param $contact_id
- *   The ID of the contact to delete.
- *
- * @return
- *   TRUE on success, FALSE otherwise.
- */
-function crm_contact_delete($contact_id) {
-  return crm_contact_delete_multiple(array($contact_id));
-}
-
-/**
  * Deletes multiple contacts by ID.
  *
  * @param $contact_ids
@@ -259,7 +217,7 @@ function crm_contact_delete($contact_id) {
  *   TRUE on success, FALSE otherwise.
  */
 function crm_contact_delete_multiple($contact_ids) {
-  return entity_get_controller('crm_contact')->delete($contact_ids);
+  return entity_get_controller('crm_contact')->deleteMultiple($contact_ids);
 }
 
 /**

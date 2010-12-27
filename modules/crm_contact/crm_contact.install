@@ -35,8 +35,8 @@ function crm_contact_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
-      'vid' => array(
-        'description' => 'The current {crm_contact_revision}.vid version identifier.',
+      'rid' => array(
+        'description' => 'The current {crm_contact_revision}.rid version identifier.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -68,7 +68,7 @@ function crm_contact_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'changed' => array(
+      'updated' => array(
         'description' => 'The Unix timestamp when the crm_contact was most recently saved.',
         'type' => 'int',
         'not null' => TRUE,
@@ -76,19 +76,20 @@ function crm_contact_schema() {
       ),
     ),
     'indexes' => array(
-      'crm_contact_changed'        => array('changed'),
+      'crm_contact_updated'        => array('updated'),
       'crm_contact_created'        => array('created'),
       'crm_contact_title_type'     => array('title', array('type', 4)),
       'crm_contact_type'           => array(array('type', 4)),
       'crm_contact_creator'        => array('uid'),
     ),
     'unique keys' => array(
-      'vid' => array('vid'),
+      'cid' => array('cid'),
+      'rid' => array('rid'),
     ),
     'foreign keys' => array(
       'crm_contact_revision' => array(
         'table' => 'crm_contact_revision',
-        'columns' => array('vid' => 'vid'),
+        'columns' => array('rid' => 'rid'),
       ),
       'crm_contact_creator' => array(
         'table' => 'users',
@@ -108,7 +109,7 @@ function crm_contact_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'vid' => array(
+      'rid' => array(
         'description' => 'The primary identifier for this version.',
         'type' => 'serial',
         'unsigned' => TRUE,
@@ -133,7 +134,7 @@ function crm_contact_schema() {
         'not null' => TRUE,
         'size' => 'big',
       ),
-      'timestamp' => array(
+      'updated' => array(
         'description' => 'A Unix timestamp indicating when this version was created.',
         'type' => 'int',
         'not null' => TRUE,
@@ -144,7 +145,7 @@ function crm_contact_schema() {
       'cid' => array('cid'),
       'uid' => array('uid'),
     ),
-    'primary key' => array('vid'),
+    'primary key' => array('rid'),
     'foreign keys' => array(
       'versioned_crm_contact' => array(
         'table' => 'crm_contact',
