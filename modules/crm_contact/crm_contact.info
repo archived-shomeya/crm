@@ -7,17 +7,8 @@ dependencies[] = crm
 dependencies[] = entity_manager
 core = 7.x
 
-; Base module files
-files[] = crm_contact.module
-files[] = crm_contact.install
-
 ; Module includes
-files[] = crm_contact.info.inc
 files[] = includes/crm_contact.controller.inc
-files[] = includes/crm_contact.forms.inc
-
-; Views include
-;files[] = includes/views/crm_contact.views.inc
 
 ; Views handlers
 ;files[] = includes/views/handlers/crm_contact_handler_something.inc
