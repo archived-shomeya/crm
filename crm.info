@@ -2,6 +2,7 @@
 name = Drupal CRM
 description = Defines features and functions common to the CRM modules.
 package = CRM
+dependencies[] = rules
 core = 7.x
 
 ; Module includes

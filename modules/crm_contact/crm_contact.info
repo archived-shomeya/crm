@@ -2,7 +2,6 @@
 name = Drupal CRM Contacts
 description = Defines the base contact entity and features..
 package = CRM
-dependencies[] = rules
 dependencies[] = crm
 dependencies[] = entity_manager
 core = 7.x
