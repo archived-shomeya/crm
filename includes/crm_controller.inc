@@ -308,7 +308,7 @@ class CRMEntityController extends DrupalDefaultEntityController {
       // Always unset the vid, we'll get a new one when we insert into the
       // revision table
       if (isset($this->{$this->revisionKey})) {
-        $this->old_{$this->revisionKey} = $this->{$this->revisionKey};
+
         unset($this->{$this->revisionKey});
       }
 
@@ -528,5 +528,24 @@ class CRMEntityController extends DrupalDefaultEntityController {
       $view[$this->entityType][$key] = $build;
     }
     return $view;
+  }
+
+  function __get($name) {
+    $field_name = 'field_' . $name;
+    if (isset($this->{$field_name}) && is_array($this->{$field_name})) {
+      // @TODO Add some language and delta handling here.
+      return $this->{$field_name}['und'][0]['value'];
+    }
+  }
+
+  function __set($name, $value) {
+    $field_name = 'field_' . $name;
+    if (isset($this->{$field_name}) && is_array($this->{$field_name})) {
+      // @TODO Add some language and delta handling here.
+      $this->{$field_name}['und'][0]['value'] = $value;
+    }
+    else {
+      $this->{$name} = $value;
+    }
   }
 }
