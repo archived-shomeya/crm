@@ -529,23 +529,4 @@ class CRMEntityController extends DrupalDefaultEntityController {
     }
     return $view;
   }
-
-  function __get($name) {
-    $field_name = 'field_' . $name;
-    if (isset($this->{$field_name}) && is_array($this->{$field_name})) {
-      // @TODO Add some language and delta handling here.
-      return $this->{$field_name}['und'][0]['value'];
-    }
-  }
-
-  function __set($name, $value) {
-    $field_name = 'field_' . $name;
-    if (isset($this->{$field_name}) && is_array($this->{$field_name})) {
-      // @TODO Add some language and delta handling here.
-      $this->{$field_name}['und'][0]['value'] = $value;
-    }
-    else {
-      $this->{$name} = $value;
-    }
-  }
 }
